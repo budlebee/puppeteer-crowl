@@ -5,7 +5,6 @@ const xlsx = require("xlsx");
   try {
     const browser = await puppeteer.launch({ headless: true });
     const page = await browser.newPage();
-    //await page.setViewport({ width: 1920, height: 1080 });
     await page.goto(`https://www.itp.or.kr/intro.asp?tmid=420`, {
       waitUntil: "networkidle2",
     });
@@ -23,8 +22,6 @@ const xlsx = require("xlsx");
 
     let result = [];
 
-    // button is an ElementHandle, so you can call methods such as click:
-
     for (let i = 0; i < 1759; i++) {
       await page.waitForTimeout(200);
       await page.waitForSelector(".paging_area");
@@ -38,6 +35,7 @@ const xlsx = require("xlsx");
 
       result = result.concat(data);
 
+      // 브라우저 내부에서 클릭이벤트를 발생시키려고 이런 방식을 씀
       const buttons = await page.evaluateHandle(() => {
         const btn = document
           .querySelector(".paging_area")
@@ -55,7 +53,6 @@ const xlsx = require("xlsx");
           }
           if (parseInt(ele.innerHTML) == parseInt(curr.innerHTML) + 1) {
             ele.click();
-            //ele.style = "background:red";
             return;
           }
         });
@@ -103,23 +100,3 @@ const xlsx = require("xlsx");
   }
   return;
 })();
-
-/*
-for (let i = 1; i < 13; i++) {
-  console.log(i);
-  const btn = document.querySelector(".paging_area").querySelectorAll("a");
-  const arr = Array.from(btn);
-  if (i % 5 == 1) {
-    arr.map((ele) => {
-      if (ele.getAttribute("title") == "다음 페이지로 이동") {
-        ele.click();
-      }
-    });
-  }
-  const nextVal = arr.filter((ele) => {
-    if (ele.innerText == `${i + 1}`) {
-      ele.click();
-    }
-  });
-}
-*/
